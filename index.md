@@ -5,6 +5,8 @@ tagline: Supporting tagline
 ---
 {% include JB/setup %}
 
+[Pre-Med Society Foundations I PowerPoint](https://www.dropbox.com/s/5a6eb5qv6y6imxa/Premed%20foundations%20I%20optimized.pptx)
+
 <!-- Read [Jekyll Quick Start](http://jekyllbootstrap.com/usage/jekyll-quick-start.html)
 
 Complete usage and documentation available at: [Jekyll Bootstrap](http://jekyllbootstrap.com)
