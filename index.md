@@ -3,6 +3,8 @@ layout: page
 title: Hello World!
 tagline: Supporting tagline
 ---
+[UBC proxy](javascript:document.location="https://login.ezproxy.library.ubc.ca/login?qurl="+encodeURIComponent(document.URL);)
+
 {% include JB/setup %}
 
 <!-- Read [Jekyll Quick Start](http://jekyllbootstrap.com/usage/jekyll-quick-start.html)
