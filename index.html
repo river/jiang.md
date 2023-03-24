@@ -151,8 +151,8 @@
                 const elapsedTime = clock.getElapsedTime();
 
                 // Calculate wobble effect using Math.sin function
-                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25; // Adjust 0.15 for the wobble range in Y-axis
-                textMesh.rotation.x = Math.sin(elapsedTime * rotationSpeed) * 0.05; // Adjust 0.1 for the wobble range in X-axis
+                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25;
+                textMesh.rotation.x = Math.cos(elapsedTime * rotationSpeed) * 0.25; 
 
                 renderer.render(scene, camera);
             };
