@@ -121,12 +121,15 @@
             });
 
             geometry.computeBoundingBox();
-            const centerOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+            const centerX = 0.5 * (geometry.boundingBox.max.x + geometry.boundingBox.min.x);
+            const centerY = 0.5 * (geometry.boundingBox.max.y + geometry.boundingBox.min.y);
+            const centerZ = 0.5 * (geometry.boundingBox.max.z + geometry.boundingBox.min.z);
+
+            geometry.translate(-centerX, -centerY, -centerZ);
 
             const material = new THREE.MeshPhongMaterial({ color: 0xffffff }); 
             const textMesh = new THREE.Mesh(geometry, material);
 
-            textMesh.position.set(centerOffset, 0, 0); // Centered position
             scene.add(textMesh);
 
             // Adding lights
@@ -156,6 +159,22 @@
             animate();
         });
 
+        // Adjust canvas size on window resize
+        function resizeCanvas() {
+            const scaleFactor = Math.min(window.innerWidth / 1000, 1);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Update text size based on window width
+            const fontSize = scaleFactor * 10;
+            textMesh.scale.set(fontSize, fontSize, fontSize);
+            textMesh.position.y = window.innerHeight * 0.15;
+            renderer.render(scene, camera);
+        }
+        window.addEventListener("resize", () => {
+            resizeCanvas();
+        });
 
         // Fetching publications from PubMed
         const fetchPublications = async () => {
@@ -192,23 +211,6 @@
             }
         };
         fetchPublications();
-
-        // Adjust canvas size on window resize
-        function resizeCanvas() {
-            const scaleFactor = Math.min(window.innerWidth / 1000, 1);
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-
-            // Update text size based on window width
-            const fontSize = scaleFactor * 10;
-            textMesh.scale.set(fontSize, fontSize, fontSize);
-            textMesh.position.y = window.innerHeight * 0.15;
-            renderer.render(scene, camera);
-        }
-        window.addEventListener("resize", () => {
-            resizeCanvas();
-        });
     </script>
 </body>
 </html>
