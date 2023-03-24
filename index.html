@@ -23,10 +23,6 @@
             z-index: -1;
         }
 
-        h1, h2, h3, h4, h5, h6 {
-            color: #FFA726;
-        }
-
         .container {
             padding-top: 340px;
             padding-bottom: 10%;
@@ -122,7 +118,7 @@
 
             const context = canvas.getContext('2d');
             const gradient = context.createLinearGradient(0, 0, 0, 64);
-            gradient.addColorStop(0, '#fff1db');
+            gradient.addColorStop(0, '#d1effa');
             gradient.addColorStop(1, '#f5f5f5');
             context.fillStyle = gradient;
             context.fillRect(0, 0, 2, 64);
@@ -153,14 +149,14 @@
                 geometry.computeBoundingBox();
                 geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), yPos, 0);
 
-                const material = new THREE.MeshPhongMaterial({ color: 0xFFA726 });
+                const material = new THREE.MeshPhongMaterial({ color: 0x2bacd4 });
                 const textMesh = new THREE.Mesh(geometry, material);
                 scene.add(textMesh);
                 return textMesh;
             }
 
-            const textMesh1 = createTextMesh('river', font, 0.55);
-            const textMesh2 = createTextMesh('jiang', font, -0.55);
+            const textMesh1 = createTextMesh('River', font, 0.55);
+            const textMesh2 = createTextMesh('Jiang', font, -0.55);
 
             const textGroup = new THREE.Group();
             textGroup.add(textMesh1);
@@ -240,9 +236,10 @@
                 const authors = publication.authors.map(author => author.name).join(", ");
                 const journal = publication.source;
                 const year = publication.pubdate.substring(0, 4);
+                const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/${publication.uid}`;
 
                 const listItem = document.createElement("li");
-                listItem.innerHTML = `${authors}. (${year}). ${title}. <i>${journal}</i>.`;
+                listItem.innerHTML = `${authors}. (${year}). <a href="${pubmedUrl}" class="link-dark" target="_blank">${title}</a>. <i>${journal}</i>.`;
 
                 publicationsList.appendChild(listItem);
             }
