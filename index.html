@@ -5,50 +5,157 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>River Jiang</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <style>
-        body { margin: 0; }
-        canvas { display: block; }
-        #content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        ul { list-style-type: none; }
+        body {
+            background-color: #f5f5f5; /* dark grey background */
+            color: #333; /* light-colored text */
+            font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        .container {
+            padding-top: 25%;
+            padding-bottom: 10%;
+        }
+
+        .profile-image img {
+            display: block;
+            margin: 0 auto 20px; /* Center the image and add space below */
+            width: 200px; /* Adjust the width as needed */
+            height: 200px; /* Adjust the height as needed */
+            object-fit: cover;
+            border-radius: 50%; /* Rounded corners */
+            border: 10px solid white; /* White border */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle drop shadow */
+        }
+
+        .icon-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            font-size: 32px;
+        }
+
+        .icon-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            text-decoration: none;
+            color: inherit;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .icon-link:hover {
+            color: #333;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .icon-link:active {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
-    <div id="content">
-        <h2>Cardiology Fellow at UBC</h2>
-        <p>
-            River Jiang is a dedicated cardiology fellow at the University of British Columbia, with an interest in the application of machine learning in cardiology and clinical echocardiography. 
-        </p>
-        <h3>Publications:</h3>
-        <ul id="publications">
-            <!-- Publications will be populated here -->
-        </ul>
-        <p>
-            <a href="https://github.com/river" target="_blank">GitHub</a> | 
-            <a href="https://twitter.com/riverjiang" target="_blank">Twitter</a>
-        </p>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <div class="profile-image">
+                    <img src="https://avatars.githubusercontent.com/u/2126" alt="Profile Image"/>
+                </div>
+
+                <div class="icon-container">
+                    <a href="https://github.com/river" target="_blank" class="icon-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://twitter.com/riverjiang" target="_blank" class="icon-link">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+
+                <h2>Hi there!</h2>
+                <p>
+                    I am a cardiology fellow at the University of British Columbia, with an interest in clinical echocardiography and the application of machine learning in cardiology. I enjoy working on statistical analysis of large datasets within medicine, and the application of deep learning, computer vision, and the development and validation of predictive AI models. I majored in Immunology at the University of Toronto, obtained my MD from McMaster University, and received post-graduate medical education in internal medicine at UBC.
+                </p>
+                <hr>
+                <h4>Publications:</h4>
+                <ul id="publications">
+                    <!-- Publications will be populated here -->
+                </ul>
+            </div>
+        </div>
     </div>
 
     <script>
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer();
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
+        renderer.setClearColor(0xf5f5f5);
 
         const loader = new THREE.FontLoader();
         loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (font) {
             const geometry = new THREE.TextGeometry('River Jiang', {
                 font: font,
-                size: 3,
-                height: 0.5
+                size: 1.4,
+                height: 0.5,
+                curveSegments: 6,
             });
 
-            const material = new THREE.MeshNormalMaterial();
+            geometry.computeBoundingBox();
+            const centerOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+
+            const material = new THREE.MeshPhongMaterial({ color: 0xffffff }); 
             const textMesh = new THREE.Mesh(geometry, material);
+
+            textMesh.position.set(centerOffset, 0, 0); // Centered position
             scene.add(textMesh);
+
+            // Adding lights
+            const light1 = new THREE.AmbientLight(0xffffff, 0.75); // softer ambient light
+            scene.add(light1);
+
+            const light2 = new THREE.PointLight(0xffffff, 1, 100);
+            light2.position.set(0, 20, 10);
+            scene.add(light2);
+
+            // Adding rotation animation
+            const clock = new THREE.Clock();
+            const rotationSpeed = 0.15;
+
+            const animate = function () {
+                requestAnimationFrame(animate);
+                
+                const elapsedTime = clock.getElapsedTime();
+
+                // Calculate wobble effect using Math.sin function
+                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.05; // Adjust 0.15 for the wobble range in Y-axis
+                textMesh.rotation.x = Math.sin(elapsedTime * rotationSpeed) * 0.05; // Adjust 0.1 for the wobble range in X-axis
+
+                renderer.render(scene, camera);
+            };
+
+            animate();
         });
 
-        camera.position.z = 10;
+        camera.position.set(0, -3, 10);
         const animate = function () {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
@@ -66,30 +173,46 @@
             const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids}&retmode=json`;
             const summaryResponse = await fetch(summaryUrl);
             const summaryData = await summaryResponse.json();
+
+            // Extract and sort publication data
+            const publications = Object.values(summaryData.result).filter(item => item.uid);
+            publications.sort((a, b) => {
+                const dateA = new Date(a.pubdate);
+                const dateB = new Date(b.pubdate);
+                return dateB - dateA;
+            });
+
+            // Create and append sorted list items
             const publicationsList = document.getElementById("publications");
-            for (const id in summaryData.result) {
-                if (id !== "uids") {
-                    const title = summaryData.result[id].title;
-                    const authors = summaryData.result[id].authors.map(author => author.name).join(", ");
-                    const journal = summaryData.result[id].source;
-                    const year = summaryData.result[id].pubdate.substring(0, 4);
+            for (const publication of publications) {
+                const title = publication.title;
+                const authors = publication.authors.map(author => author.name).join(", ");
+                const journal = publication.source;
+                const year = publication.pubdate.substring(0, 4);
 
-                    const listItem = document.createElement("li");
-                    listItem.innerHTML = `${authors}. (${year}). ${title}. <i>${journal}</i>.`;
+                const listItem = document.createElement("li");
+                listItem.innerHTML = `${authors}. (${year}). ${title}. <i>${journal}</i>.`;
 
-                    publicationsList.appendChild(listItem);
-                }
+                publicationsList.appendChild(listItem);
             }
         };
         fetchPublications();
 
         // Adjust canvas size on window resize
-        window.addEventListener("resize", () => {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            renderer.setSize(width, height);
-            camera.aspect = width / height;
+        function resizeCanvas() {
+            const scaleFactor = Math.min(window.innerWidth / 1000, 1);
+            camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Update text size based on window width
+            const fontSize = scaleFactor * 10;
+            textMesh.scale.set(fontSize, fontSize, fontSize);
+            textMesh.position.y = window.innerHeight * 0.15;
+            renderer.render(scene, camera);
+        }
+        window.addEventListener("resize", () => {
+            resizeCanvas();
         });
     </script>
 </body>
