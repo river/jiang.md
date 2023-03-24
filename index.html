@@ -256,7 +256,7 @@
                 const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/${publication.uid}`;
 
                 const listItem = document.createElement("li");
-                listItem.innerHTML = `${authors}. (${year}). <a href="${pubmedUrl}" class="link-dark" target="_blank">${title}</a>. <i>${journal}</i>.`;
+                listItem.innerHTML = `${authors}. (${year}). <a href="${pubmedUrl}" class="link-dark" target="_blank">${title}</a> <i>${journal}</i>.`;
 
                 publicationsList.appendChild(listItem);
             }
