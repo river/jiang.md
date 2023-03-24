@@ -28,7 +28,7 @@
         }
 
         .container {
-            padding-top: 250px;
+            padding-top: 340px;
             padding-bottom: 10%;
         }
 
@@ -109,7 +109,7 @@
 
     <script>
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -139,24 +139,33 @@
 
         const loader = new THREE.FontLoader();
         loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (font) {
-            const geometry = new THREE.TextGeometry('River Jiang', {
-                font: font,
-                size: 0.8,
-                height: 0.5,
-                curveSegments: 6,
-            });
 
-            geometry.computeBoundingBox();
-            const centerX = 0.5 * (geometry.boundingBox.max.x + geometry.boundingBox.min.x);
-            const centerY = 0.5 * (geometry.boundingBox.max.y + geometry.boundingBox.min.y);
-            const centerZ = 0.5 * (geometry.boundingBox.max.z + geometry.boundingBox.min.z);
+            function createTextGeometry(text, font) {
+                return new THREE.TextGeometry(text, {
+                    font: font,
+                    size: 1,
+                    height: 0.5,
+                    curveSegments: 6,
+                });
+            }
+            function createTextMesh(text, font, yPos) {
+                const geometry = createTextGeometry(text, font);
+                geometry.computeBoundingBox();
+                geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), yPos, 0);
 
-            geometry.translate(-centerX, -centerY, -centerZ);
+                const material = new THREE.MeshPhongMaterial({ color: 0xFFA726 });
+                const textMesh = new THREE.Mesh(geometry, material);
+                scene.add(textMesh);
+                return textMesh;
+            }
 
-            const material = new THREE.MeshPhongMaterial({ color: 0xFFA726 }); 
-            const textMesh = new THREE.Mesh(geometry, material);
+            const textMesh1 = createTextMesh('river', font, 0.55);
+            const textMesh2 = createTextMesh('jiang', font, -0.55);
 
-            scene.add(textMesh);
+            const textGroup = new THREE.Group();
+            textGroup.add(textMesh1);
+            textGroup.add(textMesh2);
+            scene.add(textGroup);
 
             // Adding lights
             const light1 = new THREE.AmbientLight(0xffffff, 0.8); // softer ambient light
@@ -170,15 +179,17 @@
             const clock = new THREE.Clock();
             const rotationSpeed = 0.15;
 
-            camera.position.set(0, -3, 10);
+            // adjust y-position of the text on page
+            const yPadding = -2;
+            camera.position.set(0, yPadding, 10);
             const animate = function () {
                 requestAnimationFrame(animate);
                 
                 const elapsedTime = clock.getElapsedTime();
 
                 // Calculate wobble effect using Math.sin function
-                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25;
-                textMesh.rotation.x = Math.cos(elapsedTime * rotationSpeed) * 0.25; 
+                textGroup.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25;
+                textGroup.rotation.x = Math.cos(elapsedTime * rotationSpeed) * 0.25; 
 
                 renderer.render(scene, camera);
             };
@@ -200,7 +211,6 @@
                 resizeCanvas();
             });
         });
-
         
 
         // Fetching publications from PubMed
