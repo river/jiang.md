@@ -24,7 +24,8 @@
         }
 
         .container {
-            padding-top: 25%;
+            margin-top: 200px;
+            padding-top: 10%;
             padding-bottom: 10%;
         }
 
@@ -140,27 +141,21 @@
             const clock = new THREE.Clock();
             const rotationSpeed = 0.15;
 
+            camera.position.set(0, -3, 10);
             const animate = function () {
                 requestAnimationFrame(animate);
                 
                 const elapsedTime = clock.getElapsedTime();
 
                 // Calculate wobble effect using Math.sin function
-                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.05; // Adjust 0.15 for the wobble range in Y-axis
+                textMesh.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25; // Adjust 0.15 for the wobble range in Y-axis
                 textMesh.rotation.x = Math.sin(elapsedTime * rotationSpeed) * 0.05; // Adjust 0.1 for the wobble range in X-axis
 
                 renderer.render(scene, camera);
             };
-
             animate();
         });
 
-        camera.position.set(0, -3, 10);
-        const animate = function () {
-            requestAnimationFrame(animate);
-            renderer.render(scene, camera);
-        };
-        animate();
 
         // Fetching publications from PubMed
         const fetchPublications = async () => {
