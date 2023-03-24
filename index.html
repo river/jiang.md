@@ -23,8 +23,12 @@
             z-index: -1;
         }
 
+        h1, h2, h3, h4, h5, h6 {
+            color: #FFA726;
+        }
+
         .container {
-            margin-top: 220px;
+            padding-top: 250px;
             padding-bottom: 10%;
         }
 
@@ -105,7 +109,7 @@
 
     <script>
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -137,7 +141,7 @@
         loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (font) {
             const geometry = new THREE.TextGeometry('River Jiang', {
                 font: font,
-                size: 0.75,
+                size: 0.8,
                 height: 0.5,
                 curveSegments: 6,
             });
@@ -188,8 +192,8 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
 
                 // Update text size based on window width
-                const fontSize = scaleFactor;
-                textMesh.scale.set(fontSize, fontSize, fontSize);
+                // const fontSize = scaleFactor;
+                // textMesh.scale.set(fontSize, fontSize, fontSize);
                 renderer.render(scene, camera);
             }
             window.addEventListener("resize", () => {
