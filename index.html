@@ -224,10 +224,27 @@
             // Extract and sort publication data
             const publications = Object.values(summaryData.result).filter(item => item.uid);
             publications.sort((a, b) => {
-                const dateA = new Date(a.pubdate);
-                const dateB = new Date(b.pubdate);
+                const dateA = parseDate(a.pubdate);
+                const dateB = parseDate(b.pubdate);
                 return dateB - dateA;
             });
+
+            function parseDate(dateString) {
+                const dateParts = dateString.split(" ").filter(part => part);
+                const year = parseInt(dateParts[0], 10);
+                const month = dateParts[1] ? getMonthNumber(dateParts[1]) : 0;
+                const day = dateParts[2] ? parseInt(dateParts[2], 10) : 1;
+
+                return new Date(year, month, day);
+            }
+
+            function getMonthNumber(month) {
+                const monthNames = [
+                    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                ];
+                return monthNames.indexOf(month);
+            }
 
             // Create and append sorted list items
             const publicationsList = document.getElementById("publications");
