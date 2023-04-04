@@ -246,6 +246,7 @@
 
             // Create and append sorted list items
             const publicationsList = document.getElementById("publications");
+            publicationsList.innerHTML = "";
             for (const publication of publications) {
                 const title = publication.title;
                 const authors = publication.authors.map(author => author.name).join(", ");
