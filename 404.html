@@ -16,73 +16,63 @@
 			 */
 
 			function isNumeric(num){ return !isNaN(num) }
-
 			function isUrl(url) {
 				// Regex from https://stackoverflow.com/a/3809435, with a modification to allow for TLDs of up to 24 characters
 				return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,24}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)+$/.test(url);
 			}
 
 			var isQuery = window.location.href.substr(-1) == "?";
-			var keyword = window.location.pathname.split("/")[
-					PATH_SEGMENTS_TO_SKIP + 1
-				];
+			var keyword = window.location.pathname.split("/")[PATH_SEGMENTS_TO_SKIP + 1];
 
-			function searchGH(keyword, api_url) {
-				// searches GH issues (api_url) for keyword
-				// keyword can be issue number, or a keyword
-				// returns either matching long URL or "Not found"
-
-				var xhr = new XMLHttpRequest();
+			var xhr = new XMLHttpRequest();
+			xhr.onload = function () {
+				var payload = JSON.parse(xhr.response);
 				var issue = "";
-
-				xhr.onload = function () {
-					var payload = JSON.parse(xhr.response);
-					var message = payload.message;
-					
-					if (isNumeric(keyword)) {
-						// keyword is issue number
-						issue = payload;
-					} else {
-						// keyword is shortened url name
-						for (var i=0; i<payload.length; i++) {
-							if (payload[i].body == keyword) {
-								// stop searching after first issue that matches
-								issue = payload[i];
-								break;
-							}
+				
+				// keyword is issue number
+				if (isNumeric(keyword)) {
+					issue = payload;
+				// keyword is shortened url name
+				} else {
+					for (var i=0; i<payload.length; i++) {
+						if (payload[i].body == keyword) {
+							// stop searching after first issue that matches
+							issue = payload[i];
+							break;
 						}
 					}
 				}
-
-				var url = "Not found";
-				xhr.open("GET", api_url);
-				xhr.send();
-
+				
 				// if something was returned through GH
 				if (issue != "") {
 					// check if author is valid
 					if (issue.user.login == issue.repository.owner.login) {
-						url = issue.title;
+						var url = issue.title;
+					} else {
+						var url = "Failed authentication (GitHub Issue not created by owner of repository)"
 					}
+				} else {
+					// no issue matched
+					var url = "Not found";
 				}
-				return url;
+
+				// update page
+				document.getElementById("link").textContent = url;
+
+				// if current url ends in '?', just display the full url
+				if (isUrl(url) && !isQuery) {
+					// redirect user
+					window.location.replace(url);
+				}
 			}
 
+			// Send XHR request
 			var api_url = GITHUB_ISSUES_LINK;
 			// Get /issues/ID
 			if (isNumeric(keyword)) { api_url += keyword; } 
-			// Get all /issues
-			else { api_url = api_url.slice(0, -1); }
+			xhr.open("GET", api_url);
+			xhr.send();
 
-			var url = searchGH(keyword, api_url);
-			// update page
-			document.getElementById("link").textContent = url;
-
-			// if current url ends in '?', just display the full url
-			if (isUrl(url) && !isQuery) {
-				// redirect user
-				window.location.replace(url);
-			}
 		</script>
 	</head>
 	<body>
