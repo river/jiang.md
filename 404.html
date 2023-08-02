@@ -33,11 +33,12 @@
 				// returns either matching long URL or "Not found"
 
 				var xhr = new XMLHttpRequest();
+				var issue = "";
+
 				xhr.onload = function () {
 					var payload = JSON.parse(xhr.response);
 					var message = payload.message;
-
-					var issue = "";
+					
 					if (isNumeric(keyword)) {
 						// keyword is issue number
 						issue = payload;
