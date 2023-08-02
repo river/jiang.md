@@ -70,7 +70,8 @@
 			// Send XHR request
 			var api_url = GITHUB_ISSUES_LINK;
 			// Get /issues/ID
-			if (isNumeric(keyword)) { api_url += keyword; } 
+			if (isNumeric(keyword)) { api_url += keyword; }
+			else { api_url = api_url.slice(0, -1); }
 			xhr.open("GET", api_url);
 			xhr.send();
 
