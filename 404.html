@@ -36,7 +36,7 @@
 				// keyword is shortened url name
 				} else {
 					for (var i=0; i<payload.length; i++) {
-						if (payload[i].body == keyword) {
+						if (payload[i].title == keyword) {
 							// stop searching after first issue that matches
 							issue = payload[i];
 							break;
@@ -48,7 +48,7 @@
 				if (issue != "") {
 					// check if author is valid
 					if (issue.user.login == ME) {
-						var url = issue.title;
+						var url = issue.body;
 					} else {
 						var url = "Failed authentication (GitHub Issue not created by owner of repository)"
 					}
@@ -58,7 +58,11 @@
 				}
 
 				// update page
-				document.getElementById("link").textContent = url;
+				if (isUrl(url)){
+					document.getElementById("link").textContent = "<a href='"+url+"'>"+url+"</a>";
+				} else {
+					document.getElementById("link").textContent = url;
+				}
 
 				// if current url ends in '?', just display the full url
 				if (isUrl(url) && !isQuery) {
