@@ -57,7 +57,7 @@
               url.hostname === location.hostname;
 
             var isClosedByMe =
-              payload.closed_by.login == ME;
+              payload.closed_by.login.toLowerCase() == ME;
             
             if (!isInvalidUrl && isClosedByMe) {
               location.replace(title);
