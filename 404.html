@@ -87,16 +87,16 @@
                 element.textContent = link;
               } else {
                 // Forward to link
-                location.replace(title);
+                location.replace(link);
               }
             }
           } catch (e) {
-            location.replace(homepage);
+            // location.replace(homepage);
           }
         };
 
         xhr.onerror = function () {
-          location.replace(homepage);
+          // location.replace(homepage);
         };
 
         let api_url = GITHUB_ISSUES_LINK;
@@ -115,6 +115,6 @@
     </script>
   </head>
   <body>
-    Links to <span id="link"></span>
+    <h1 id="link">Not found</h1>
   </body>
 </html>
