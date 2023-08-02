@@ -11,6 +11,8 @@
       var GITHUB_ISSUES_LINK =
         "https://api.github.com/repos/river/gh-pages-url-shortener/issues/";
       var PATH_SEGMENTS_TO_SKIP = 0;
+      // github username (verify that issue was closed by you)
+      var ME = "river";
 
       /**
        * DO NOT TOUCH ANYTHING BELOW THIS COMMENT UNLESS YOU KNOW WHAT YOU ARE DOING
@@ -54,9 +56,10 @@
               !isUrl(title) ||
               url.hostname === location.hostname;
 
-            if (isInvalidUrl) {
-              // location.replace(homepage);
-            } else {
+            var isClosedByMe =
+              payload.closed_by.login == ME;
+            
+            if (!isInvalidUrl && isClosedByMe) {
               location.replace(title);
             }
           } catch (e) {
