@@ -59,7 +59,7 @@
 
 				// update page
 				if (isUrl(url)){
-					document.getElementById("link").textContent = "<a href='"+url+"'>"+url+"</a>";
+					document.getElementById("link").innerHTML = "<a href='"+url+"'>"+url+"</a>";
 				} else {
 					document.getElementById("link").textContent = url;
 				}
