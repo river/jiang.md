@@ -18,8 +18,7 @@
 
 			function isNumeric(num){ return !isNaN(num) }
 			function isUrl(url) {
-				// Regex from https://stackoverflow.com/a/3809435, with a modification to allow for TLDs of up to 24 characters
-				return /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,24}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)+$/.test(url);
+				return /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/.test(url);
 			}
 
 			var isQuery = window.location.href.substr(-1) == "?";
