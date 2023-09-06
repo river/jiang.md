@@ -36,13 +36,14 @@
 							document.getElementById("link").innerHTML = "<a href='"+url+"'>"+url+"</a>";
 							if (!isQuery) { window.location.replace(url); }
 						} else {
+							// not a url, just display text contents
 							document.getElementById("link").textContent = url;
 						}
 					} else {
-						var url = "Failed authentication (GitHub Issue author is incorrect)"
+						document.getElementById("link").textContent = "Failed authentication (GitHub Issue author is incorrect)"
 					}
 				} else {
-					var url = "Not found";
+					document.getElementById("link").textContent = "Not found";
 				}
 			}
 
