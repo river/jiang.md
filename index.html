@@ -10,8 +10,8 @@
 
     <style>
         body {
-            color: #ccc;
-            background: #152330;
+            color: #bbb;
+            background: #333;
             font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
             font-size: 18px;
         }
@@ -122,7 +122,7 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
-        renderer.setClearColor(0x152330);
+        renderer.setClearColor(0x333333);
 
         function createGradientTexture() {
             const canvas = document.createElement('canvas');
@@ -131,8 +131,8 @@
 
             const context = canvas.getContext('2d');
             const gradient = context.createLinearGradient(0, 0, 0, 64);
-            gradient.addColorStop(0, '#0c2640');
-            gradient.addColorStop(1, '#152330');
+            gradient.addColorStop(0, '#333333');
+            gradient.addColorStop(1, '#333333');
             context.fillStyle = gradient;
             context.fillRect(0, 0, 2, 64);
 
@@ -162,7 +162,7 @@
                 geometry.computeBoundingBox();
                 geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), yPos, 0);
 
-                const material = new THREE.MeshPhongMaterial({ color: 0x1f4f80});
+                const material = new THREE.MeshPhongMaterial({ color: 0x777777});
                 const textMesh = new THREE.Mesh(geometry, material);
                 scene.add(textMesh);
                 return textMesh;
@@ -177,7 +177,7 @@
             scene.add(textGroup);
 
             // Adding lights
-            const light1 = new THREE.AmbientLight(0xffffff, 1.2); // softer ambient light
+            const light1 = new THREE.AmbientLight(0x548abf, 1.2); // softer ambient light
             scene.add(light1);
 
             const light2 = new THREE.PointLight(0xdb9c1f, 2, 100);
