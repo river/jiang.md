@@ -4,276 +4,419 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>River Jiang</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <style>
+        :root {
+            --bg-color-light: #f4f4f4;
+            --text-color-light: #333;
+            --card-bg-light: #fff;
+            --link-color-light: #007bff;
+            --link-hover-light: #0056b3;
+            --border-color-light: #ddd;
+
+            --bg-color-dark: #1a1a1a;
+            --text-color-dark: #f0f0f0;
+            --card-bg-dark: #2c2c2c;
+            --link-color-dark: #63a9ff;
+            --link-hover-dark: #82baff;
+            --border-color-dark: #444;
+
+            --bg-color: var(--bg-color-light);
+            --text-color: var(--text-color-light);
+            --card-bg: var(--card-bg-light);
+            --link-color: var(--link-color-light);
+            --link-hover: var(--link-hover-light);
+            --border-color: var(--border-color-light);
+        }
+
         body {
-            color: #bbb;
-            background: #333;
-            font-family: Seravek, 'Gill Sans Nova', Ubuntu, Calibri, 'DejaVu Sans', source-sans-pro, sans-serif;
-            font-size: 18px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        body h1, body h2, body h3, body h4 {
-            color: #fff;
-        }
-
-        body a {
-            color: #548abf;
-        }
-
-        body a:hover {
-            color: #6da6de;
-        }
-
-        canvas {
-            display: block;
-            position: absolute;
+        .background-grid {
+            position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
             z-index: -1;
+            opacity: 0.25;
+        }
+
+        .grid-dot {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: var(--text-color);
+            border-radius: 50%;
+            opacity: 0.8;
+            transition: background-color 0.3s;
+        }
+
+
+
+        .dark-mode {
+            --bg-color: var(--bg-color-dark);
+            --text-color: var(--text-color-dark);
+            --card-bg: var(--card-bg-dark);
+            --link-color: var(--link-color-dark);
+            --link-hover: var(--link-hover-dark);
+            --border-color: var(--border-color-dark);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: var(--bg-color-dark);
+                --text-color: var(--text-color-dark);
+                --card-bg: var(--card-bg-dark);
+                --link-color: var(--link-color-dark);
+                --link-hover: var(--link-hover-dark);
+                --border-color: var(--border-color-dark);
+            }
         }
 
         .container {
-            padding-top: 50vh;
-            padding-bottom: 10vh;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .profile-image img {
-            display: block;
-            margin: 0 auto 20px;
-            width: 140px;
-            height: 140px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 5px solid white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            border: 1px solid var(--border-color);
         }
 
-        .icon-container {
+        .profile-header {
             display: flex;
-            justify-content: center;
-            gap: 1rem;
-            font-size: 32px;
-        }
-
-        .icon-link {
-            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            width: 64px;
-            height: 64px;
-            text-decoration: none;
-            color: inherit;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
         }
 
-        .icon-link:hover {
-            color: #333;
-            background-color: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .profile-info-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid var(--border-color);
+        }
+        
+        .profile-info h1 {
+            margin: 0;
+            font-size: 1.8em;
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .profile-info p {
+            margin: 0;
+            font-size: 1.1em;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .social-links {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-size: 1.4em;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .social-links a:hover {
+            color: var(--link-hover);
             transform: translateY(-2px);
-            text-decoration: none;
         }
 
-        .icon-link:active {
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transform: translateY(0);
+        h2 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-top: 0;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 1.5em;
         }
+
+        #publications ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        #publications li {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        #publications li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        #publications p {
+            margin: 0;
+        }
+
+        #publications a {
+            color: var(--link-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        #publications a:hover {
+            text-decoration: underline;
+            color: var(--link-hover);
+        }
+        
+        #publications i { /* Journal name */
+            color: var(--text-color);
+            opacity: 0.9;
+        }        
+        .loader {
+            text-align: center;
+            font-size: 1.2em;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        @media (max-width: 600px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            .profile-info-left {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-image {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            .profile-info h1 {
+                font-size: 1.5em;
+            }
+            .social-links {
+                justify-content: center;
+            }
+        }
+
     </style>
 </head>
 <body>
+    <div class="background-grid" id="backgroundGrid"></div>
     <div class="container">
-        <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <div class="profile-image">
-                    <img src="https://avatars.githubusercontent.com/u/2126" alt="River Profile Image"/>
+        <div class="card profile-card">
+            <div class="profile-header">
+                <div class="profile-info-left">
+                    <img src="https://avatars.githubusercontent.com/u/2126" alt="River Profile Image" class="profile-image">
+                    <div class="profile-info">
+                        <h1>River Jiang</h1>
+                    </div>
                 </div>
-
-                <h2>Hi there!</h2>
-                <p>
-                    I am an advanced echocardiography fellow at the University of California, San Francisco, a fellow in the Clinician Investigator Program at the University of British Columbia, and a student in the Master of Information and Data Science program at the University of California, Berkeley. I am working on applications of machine learning and computer vision for cardiovascular disease phenotyping and prognostication, and my work is supported through the University of British Columbia Friedman Scholarship. I completed my internal medicine and cardiology training at the University of British Columbia and obtained my MD from McMaster University.  I enjoy working on statistical analysis of large datasets within medicine, deep learning, computer vision, and development and validation of predictive AI models.
-                </p>
-
-                <div class="icon-container">
-                    <a href="https://github.com/river" target="_blank" class="icon-link">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="https://twitter.com/riverjiang" target="_blank" class="icon-link">
-                        <i class="fab fa-twitter"></i>
-                    </a>
+                <div class="social-links">
+                    <a href="https://github.com/river" target="_blank" aria-label="GitHub Profile"><i class="fab fa-github"></i></a>
+                    <a href="https://www.linkedin.com/in/riverjiang/" target="_blank" aria-label="LinkedIn Profile"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://twitter.com/riverjiang" target="_blank" aria-label="Twitter Profile"><i class="fab fa-twitter"></i></a>
                 </div>
-
-                <hr>
-                <h4>Publications:</h4>
-                <ul id="publications">
-                    Loading...
-                </ul>
             </div>
+        </div>
+
+        <div class="card bio-card">
+            <h2>Hi there!</h2>
+            <p>
+                I am an advanced echocardiography fellow at the University of California, San Francisco, a fellow in the Clinician Investigator Program at the University of British Columbia, and a student in the Master of Information and Data Science program at the University of California, Berkeley. I completed my internal medicine and cardiology training at the University of British Columbia and obtained my MD from McMaster University
+            </p>
+            <p>
+                I am working on applications of machine learning and computer vision for cardiovascular disease phenotyping and prognostication, and my work is supported through the University of British Columbia Friedman Scholarship. I enjoy working on statistical analysis of large datasets within medicine, deep learning, computer vision, and development and validation of predictive AI models.
+            </p>
+        </div>
+
+        <div class="card publications-card" id="publications">
+            <h2>Publications</h2>
+            <div class="loader">Loading publications... <i class="fas fa-spinner fa-spin"></i></div>
+            <ul>
+                <!-- Publications will be loaded here -->
+            </ul>
         </div>
     </div>
 
     <script>
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
-        renderer.setClearColor(0x333333);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Create background grid animation
+            const createBackgroundGrid = () => {
+                const gridContainer = document.getElementById('backgroundGrid');
+                const dotsPerRow = Math.floor(window.innerWidth / 20);
+                const dotsPerColumn = Math.floor(window.innerHeight / 20);
+                const totalDots = dotsPerRow * dotsPerColumn;
 
-        function createGradientTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 2;
-            canvas.height = 64;
+                for (let i = 0; i < totalDots; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = 'grid-dot';
+                    
+                    const row = Math.floor(i / dotsPerRow);
+                    const col = i % dotsPerRow;
+                    
+                    const x = (col * 20) + 10;
+                    const y = (row * 20) + 10;
+                    
+                    dot.style.left = x + 'px';
+                    dot.style.top = y + 'px';
+                    
+                    gridContainer.appendChild(dot);
+                }
 
-            const context = canvas.getContext('2d');
-            const gradient = context.createLinearGradient(0, 0, 0, 64);
-            gradient.addColorStop(0, '#333333');
-            gradient.addColorStop(1, '#333333');
-            context.fillStyle = gradient;
-            context.fillRect(0, 0, 2, 64);
-
-            return canvas;
-        }
-
-        const gradientTexture = new THREE.CanvasTexture(createGradientTexture());
-        const gradientMaterial = new THREE.MeshBasicMaterial({ map: gradientTexture });
-        const gradientPlane = new THREE.Mesh(new THREE.PlaneGeometry(50, 10), gradientMaterial);
-        gradientPlane.position.z = -10;
-        gradientPlane.position.y = 4;
-        scene.add(gradientPlane);
-
-        const loader = new THREE.FontLoader();
-        loader.load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/fonts/helvetiker_bold.typeface.json', function (font) {
-
-            function createTextGeometry(text, font) {
-                return new THREE.TextGeometry(text, {
-                    font: font,
-                    size: 1.2,
-                    height: 0.5,
-                    curveSegments: 6,
+                anime({
+                    targets: '.grid-dot',
+                    translateY: [
+                        { value: 25, duration: 2500 },
+                        { value: -25, duration: 2500 },
+                        { value: 0, duration: 2500 }
+                    ],
+                    translateX: [
+                        { value: 15, duration: 3500 },
+                        { value: -15, duration: 3500 },
+                        { value: 0, duration: 3500 }
+                    ],
+                    scale: [
+                        { value: 1.5, duration: 2000 },
+                        // { value: 0.5, duration: 2000 },
+                        { value: 1, duration: 2000 }
+                    ],
+                    delay: (el, i) => {
+                        const row = Math.floor(i / dotsPerRow);
+                        const col = i % dotsPerRow;
+                        // Create a circular ripple effect from center
+                        const centerX = dotsPerRow / 2;
+                        const centerY = dotsPerColumn / 2;
+                        const distance = Math.sqrt(Math.pow(col - centerX, 2) + Math.pow(row - centerY, 2));
+                        return distance * 30;
+                    },
+                    loop: true,
+                    easing: 'easeInOutSine'
                 });
-            }
-            function createTextMesh(text, font, yPos) {
-                const geometry = createTextGeometry(text, font);
-                geometry.computeBoundingBox();
-                geometry.translate(-0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x), yPos, 0);
-
-                const material = new THREE.MeshPhongMaterial({ color: 0x777777});
-                const textMesh = new THREE.Mesh(geometry, material);
-                scene.add(textMesh);
-                return textMesh;
-            }
-
-            const textMesh1 = createTextMesh('river', font, 0.65);
-            const textMesh2 = createTextMesh('jiang', font, -0.65);
-
-            const textGroup = new THREE.Group();
-            textGroup.add(textMesh1);
-            textGroup.add(textMesh2);
-            scene.add(textGroup);
-
-            // Adding lights
-            const light1 = new THREE.AmbientLight(0x548abf, 1.2); // softer ambient light
-            scene.add(light1);
-
-            const light2 = new THREE.PointLight(0xdb9c1f, 2, 100);
-            light2.position.set(0, 20, 10);
-            scene.add(light2);
-
-            // Adding rotation animation
-            const clock = new THREE.Clock();
-            const rotationSpeed = 0.05;
-
-            // adjust y-position of the text on page
-            const yPadding = -2;
-            camera.position.set(0, yPadding, 10);
-            const animate = function () {
-                requestAnimationFrame(animate);
-                
-                const elapsedTime = clock.getElapsedTime();
-
-                // wobble effect
-                textGroup.rotation.y = Math.sin(elapsedTime * rotationSpeed) * 0.25;
-                textGroup.rotation.x = Math.cos(elapsedTime * rotationSpeed) * 0.25; 
-
-                renderer.render(scene, camera);
             };
-            animate();
 
-            // Adjust canvas size on window resize
-            function resizeCanvas() {
-                const scaleFactor = Math.min(window.innerWidth / 700, 1);
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
+            createBackgroundGrid();
 
-                renderer.render(scene, camera);
-            }
-            window.addEventListener("resize", () => {
-                resizeCanvas();
+            // Recreate grid on window resize
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    document.getElementById('backgroundGrid').innerHTML = '';
+                    createBackgroundGrid();
+                }, 250);
+            });
+
+            // Fetching publications from PubMed
+            const fetchPublications = async () => {
+                const publicationsList = document.querySelector("#publications ul");
+                const loader = document.querySelector("#publications .loader");
+                
+                if (!publicationsList || !loader) {
+                    console.error("Publications list or loader element not found.");
+                    if(loader) loader.textContent = "Error loading publications.";
+                    return;
+                }
+
+                try {
+                    const query = "River Jiang[Author]";
+                    const esearchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmode=json&sort=pub+date`;
+                    const esearchResponse = await fetch(esearchUrl);
+                    if (!esearchResponse.ok) throw new Error(`PubMed API Error (esearch): ${esearchResponse.status}`);
+                    const esearchData = await esearchResponse.json();
+                    
+                    const ids = esearchData.esearchresult.idlist;
+                    if (!ids || ids.length === 0) {
+                        loader.textContent = "No publications found.";
+                        return;
+                    }
+
+                    const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(",")}&retmode=json`;
+                    const summaryResponse = await fetch(summaryUrl);
+                    if (!summaryResponse.ok) throw new Error(`PubMed API Error (esummary): ${summaryResponse.status}`);
+                    const summaryData = await summaryResponse.json();
+
+                    const publications = Object.values(summaryData.result)
+                        .filter(item => item.uid) // Ensure item has a UID
+                        .sort((a, b) => { // Sort by date, most recent first
+                            const dateA = new Date(a.sortpubdate || a.pubdate);
+                            const dateB = new Date(b.sortpubdate || b.pubdate);
+                            return dateB - dateA;
+                        });
+
+                    publicationsList.innerHTML = ""; // Clear previous (e.g. loader)
+                    if (publications.length === 0) {
+                         loader.textContent = "No publications found.";
+                         return;
+                    }
+                    loader.style.display = 'none';
+
+
+                    publications.forEach(publication => {
+                        const title = publication.title || "No title available";
+                        const authors = (publication.authors || []).map(author => author.name).join(", ");
+                        const journal = publication.source || "N/A";
+                        const pubdate = publication.pubdate || "N/A";
+                        const year = pubdate.substring(0, 4);
+                        const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/${publication.uid}`;
+
+                        const listItem = document.createElement("li");
+                        listItem.innerHTML = `
+                            <p><strong><a href="${pubmedUrl}" target="_blank">${title}</a></strong></p>
+                            <p><small>${authors}. (${year}). <i>${journal}</i>.</small></p>
+                        `;
+                        publicationsList.appendChild(listItem);
+                    });
+                } catch (error) {
+                    console.error("Failed to fetch publications:", error);
+                    if (loader) loader.innerHTML = `Failed to load publications. <br><small>${error.message}</small>`;
+                }
+            };
+
+            fetchPublications();
+
+            // Animate cards into view
+            anime({
+                targets: '.card',
+                translateY: [20, 0],
+                opacity: [0, 1],
+                delay: anime.stagger(100, {start: 200}), // Stagger the animation for each card
+                duration: 800,
+                easing: 'easeOutExpo'
             });
         });
-        
-
-        // Fetching publications from PubMed
-        const fetchPublications = async () => {
-            const query = "River Jiang[Author]";
-            const url = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${query}&retmode=json`;
-            const response = await fetch(url);
-            const data = await response.json();
-            const ids = data.esearchresult.idlist.join(",");
-
-            const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids}&retmode=json`;
-            const summaryResponse = await fetch(summaryUrl);
-            const summaryData = await summaryResponse.json();
-
-            // Extract and sort publication data
-            const publications = Object.values(summaryData.result).filter(item => item.uid);
-            publications.sort((a, b) => {
-                const dateA = parseDate(a.pubdate);
-                const dateB = parseDate(b.pubdate);
-                return dateB - dateA;
-            });
-
-            // Manually parsing date is needed for reverse chronological sort to work in current Webkit
-            function parseDate(dateString) {
-                const dateParts = dateString.split(" ").filter(part => part);
-                const year = parseInt(dateParts[0], 10);
-                const month = dateParts[1] ? getMonthNumber(dateParts[1]) : 0;
-                const day = dateParts[2] ? parseInt(dateParts[2], 10) : 1;
-
-                return new Date(year, month, day);
-            }
-
-            function getMonthNumber(month) {
-                const monthNames = [
-                    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-                ];
-                return monthNames.indexOf(month);
-            }
-
-            // Create and append sorted list items
-            const publicationsList = document.getElementById("publications");
-            publicationsList.innerHTML = "";
-            for (const publication of publications) {
-                const title = publication.title;
-                const authors = publication.authors.map(author => author.name).join(", ");
-                const journal = publication.source;
-                const year = publication.pubdate.substring(0, 4);
-                const pubmedUrl = `https://pubmed.ncbi.nlm.nih.gov/${publication.uid}`;
-
-                const listItem = document.createElement("li");
-                listItem.innerHTML = `${authors}. (${year}). <a href="${pubmedUrl}" class="link-dark" target="_blank">${title}</a> <i>${journal}</i>.`;
-
-                publicationsList.appendChild(listItem);
-            }
-        };
-        fetchPublications();
     </script>
 </body>
 </html>
