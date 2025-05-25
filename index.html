@@ -10,7 +10,7 @@
         :root {
             --bg-color-light: #f4f4f4;
             --text-color-light: #333;
-            --card-bg-light: #fff;
+            --card-bg-light: #f4f4f4;
             --link-color-light: #007bff;
             --link-hover-light: #0056b3;
             --border-color-light: #ddd;
@@ -42,29 +42,6 @@
             overflow-x: hidden;
             min-height: 100vh;
         }
-
-        .background-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-            opacity: 0.25;
-        }
-
-        .grid-dot {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background-color: var(--text-color);
-            border-radius: 50%;
-            opacity: 0.8;
-            transition: background-color 0.3s;
-        }
-
-
 
         .dark-mode {
             --bg-color: var(--bg-color-dark);
@@ -234,7 +211,7 @@
     </style>
 </head>
 <body>
-    <div class="background-grid" id="backgroundGrid"></div>
+
     <div class="container">
         <div class="card profile-card">
             <div class="profile-header">
@@ -273,72 +250,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Create background grid animation
-            const createBackgroundGrid = () => {
-                const gridContainer = document.getElementById('backgroundGrid');
-                const dotsPerRow = Math.floor(window.innerWidth / 20);
-                const dotsPerColumn = Math.floor(window.innerHeight / 20);
-                const totalDots = dotsPerRow * dotsPerColumn;
-
-                for (let i = 0; i < totalDots; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'grid-dot';
-                    
-                    const row = Math.floor(i / dotsPerRow);
-                    const col = i % dotsPerRow;
-                    
-                    const x = (col * 20) + 10;
-                    const y = (row * 20) + 10;
-                    
-                    dot.style.left = x + 'px';
-                    dot.style.top = y + 'px';
-                    
-                    gridContainer.appendChild(dot);
-                }
-
-                anime({
-                    targets: '.grid-dot',
-                    translateY: [
-                        { value: 25, duration: 2500 },
-                        { value: -25, duration: 2500 },
-                        { value: 0, duration: 2500 }
-                    ],
-                    translateX: [
-                        { value: 15, duration: 3500 },
-                        { value: -15, duration: 3500 },
-                        { value: 0, duration: 3500 }
-                    ],
-                    scale: [
-                        { value: 1.5, duration: 2000 },
-                        // { value: 0.5, duration: 2000 },
-                        { value: 1, duration: 2000 }
-                    ],
-                    delay: (el, i) => {
-                        const row = Math.floor(i / dotsPerRow);
-                        const col = i % dotsPerRow;
-                        // Create a circular ripple effect from center
-                        const centerX = dotsPerRow / 2;
-                        const centerY = dotsPerColumn / 2;
-                        const distance = Math.sqrt(Math.pow(col - centerX, 2) + Math.pow(row - centerY, 2));
-                        return distance * 30;
-                    },
-                    loop: true,
-                    easing: 'easeInOutSine'
-                });
-            };
-
-            createBackgroundGrid();
-
-            // Recreate grid on window resize
-            let resizeTimeout;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    document.getElementById('backgroundGrid').innerHTML = '';
-                    createBackgroundGrid();
-                }, 250);
-            });
-
             // Fetching publications from PubMed
             const fetchPublications = async () => {
                 const publicationsList = document.querySelector("#publications ul");
